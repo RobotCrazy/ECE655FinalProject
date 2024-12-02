@@ -10,6 +10,7 @@ from torchvision import transforms
 import time
 from params import par
 from helper import normalize_angle_delta
+from pprint import pprint
 
 
 def get_data_info(folder_list, seq_len_range, overlap, sample_times=1, pad_y=False, shuffle=False, sort=True):
@@ -194,9 +195,16 @@ class ImageSequenceDataset(Dataset):
         self.seq_len_list = list(self.data_info.seq_len)
         self.image_arr = np.asarray(self.data_info.image_path)  # image paths
         self.groundtruth_arr = np.asarray(self.data_info.pose)
+        # pprint("?Ground Truth:")
+        # pprint(self.groundtruth_arr)
 
     def __getitem__(self, index):
         raw_groundtruth = np.hsplit(self.groundtruth_arr[index], np.array([6]))	
+        # print(f"Raw Ground Truth:")
+        # pprint(raw_groundtruth[0])
+        # print("Truth 1:")
+        # pprint(raw_groundtruth[1])
+        # print("Done printing")
         groundtruth_sequence = raw_groundtruth[0]
         groundtruth_rotation = raw_groundtruth[1][0].reshape((3, 3)).T # opposite rotation of the first frame
         groundtruth_sequence = torch.FloatTensor(groundtruth_sequence)

@@ -130,3 +130,24 @@ class DeepVO(nn.Module):
             torch.nn.utils.clip_grad_norm(self.rnn.parameters(), self.clip)
         optimizer.step()
         return loss
+    
+    def freeze_cnn(self):
+        print("Freezing CNN")
+        for par in self.conv1.parameters():
+            par.requires_grad = False
+        for par in self.conv2.parameters():
+            par.requires_grad = False
+        for par in self.conv3.parameters():
+            par.requires_grad = False
+        for par in self.conv3_1.parameters():
+            par.requires_grad = False
+        for par in self.conv4.parameters():
+            par.requires_grad = False
+        for par in self.conv4_1.parameters():
+            par.requires_grad = False
+        for par in self.conv5.parameters():
+            par.requires_grad = False
+        for par in self.conv5_1.parameters():
+            par.requires_grad = False
+        for par in self.conv6.parameters():
+            par.requires_grad = False

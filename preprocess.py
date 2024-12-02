@@ -70,7 +70,8 @@ def calculate_rgb_mean_std(image_path_list, minus_point_5=False):
 
 	image_sequence = []
 	for idx, img_path in enumerate(image_path_list):
-		print('{} / {}'.format(idx, n_images), end='\r')
+		# print("Looping")
+		# print('{} / {}'.format(idx, n_images), end='\r')
 		img_as_img = Image.open(img_path)
 		img_as_tensor = to_tensor(img_as_img)
 		if minus_point_5:
@@ -115,6 +116,9 @@ if __name__ == '__main__':
 	train_video = ['00', '02', '08', '09', '06', '04', '10']
 	image_path_list = []
 	for folder in train_video:
-		image_path_list += glob.glob('KITTI/images/{}/*.png'.format(folder))
+		image_path_list += glob.glob('C:/Singh/Upneet/College/Semester 9/ECE 655/Final Project/DeepVO-pytorch/KITTI/images/{}/*.png'.format(folder))
+		# print(f"File: {'KITTI/images/{}/*.png'.format(folder)}")
+		# print(f"Glob: {glob.glob('KITTI/images/{}/*.png'.format(folder))}")
+
 	calculate_rgb_mean_std(image_path_list, minus_point_5=True)
 
