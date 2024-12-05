@@ -10,10 +10,12 @@ import torch
 from data_helper import get_data_info, ImageSequenceDataset
 from torch.utils.data import DataLoader
 from helper import eulerAnglesToRotationMatrix
+import matplotlib.pyplot as plt
 
 if __name__ == '__main__':    
 
-	videos_to_test = ['04', '05', '07', '10', '09']
+	# videos_to_test = ['04', '05', '07', '10', '09']
+	videos_to_test = ['04']
 
 	# Path
 	load_model_path = par.load_model_path   #choose the model you want to load
@@ -45,8 +47,8 @@ if __name__ == '__main__':
 	fd=open('test_dump.txt', 'w')
 	fd.write('\n'+'='*50 + '\n')
 
-
-	for test_video in videos_to_test:
+	test_video_losses = []
+	for i, test_video in enumerate(videos_to_test):
 		df = get_data_info(folder_list=[test_video], seq_len_range=[seq_len, seq_len], overlap=overlap, sample_times=1, shuffle=False, sort=False)
 		df = df.loc[df.seq_len == seq_len]  # drop last
 		dataset = ImageSequenceDataset(df, par.resize_mode, (par.img_w, par.img_h), par.img_means, par.img_stds, par.minus_point_5)
@@ -85,7 +87,10 @@ if __name__ == '__main__':
 						# Convert predicted relative pose to absolute pose by adding last pose
 						pose[i] += answer[-1][i]
 					answer.append(pose.tolist())
+				print(f"thing 1{batch_predict_pose}")
 				batch_predict_pose = batch_predict_pose[1:]
+				print(f"thing 2{batch_predict_pose}")
+				exit()
 
 			# transform from relative to absolute 
 			
@@ -120,11 +125,20 @@ if __name__ == '__main__':
 
 		# Calculate loss
 		gt_pose = np.load('{}{}.npy'.format(par.pose_dir, test_video))  # (n_images, 6)
+		num_images = gt_pose.shape[0]
+		losses = []
 		loss = 0
 		for t in range(len(gt_pose)):
 			angle_loss = np.sum((answer[t][:3] - gt_pose[t,:3]) ** 2)
+			print()
 			translation_loss = np.sum((answer[t][3:] - gt_pose[t,3:6]) ** 2)
 			loss = (100 * angle_loss + translation_loss)
+			losses.append(loss)
+		test_video_losses.append(losses)
+
+		plt.plot(np.arange(0, num_images), losses)
+		plt.title("Loss Plot")
 		loss /= len(gt_pose)
 		print('Loss = ', loss)
 		print('='*50)
+	plt.show()

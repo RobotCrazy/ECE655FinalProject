@@ -39,6 +39,8 @@ class DeepVO(nn.Module):
         __tmp = Variable(torch.zeros(1, 6, imsize1, imsize2))
         __tmp = self.encode_image(__tmp)
 
+        print(f"Temp Size: {np.prod(__tmp.size())}")
+
         # RNN
         self.rnn = nn.LSTM(
                     input_size=int(np.prod(__tmp.size())), 
@@ -151,3 +153,13 @@ class DeepVO(nn.Module):
             par.requires_grad = False
         for par in self.conv6.parameters():
             par.requires_grad = False
+
+
+
+if __name__ == "__main__":
+    model1 = DeepVO(par.img_h, par.img_w, par.batch_norm)
+    print(f"Num Parameters: {sum( p.numel() for p in model1.parameters() if (p.requires_grad))}")
+    model1.freeze_cnn()
+    print(f"Num Parameters: {sum( p.numel() for p in model1.parameters() if (p.requires_grad))}")
+
+

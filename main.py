@@ -8,6 +8,7 @@ from params import par
 from model import DeepVO
 from data_helper import get_data_info, SortedRandomBatchSampler, ImageSequenceDataset, get_partition_data_info
 from pprint import pprint
+import torch.nn as nn
 
 # Write all hyperparameters to record_path
 mode = 'a' if par.resume else 'w'
@@ -79,7 +80,7 @@ if par.pretrained_flownet and not par.resume:
 	M_deepvo.load_state_dict(model_dict)
 
 
-M_deepvo.freeze_cnn()
+# M_deepvo.freeze_cnn()
 
 
 # Create optimizer
@@ -107,7 +108,7 @@ min_loss_v = 1e10
 M_deepvo.train()
 i = 0
 count = 0
-print(f"Num Parameters: {sum(p.numel() for p in M_deepvo.parameters() if p.requires_grad)}")
+print(f"Num Parameters: {sum( p.numel() for p in M_deepvo.parameters() if p.requires_grad )}")
 
 # for ep in range(par.epochs):
 # 	print(f"Epoch: {i}")
