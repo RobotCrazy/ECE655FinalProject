@@ -26,7 +26,7 @@ class DeepVO(nn.Module):
         # CNN
         self.rnn = nn.LSTM(
                     input_size=int(30720), 
-                    hidden_size=500, 
+                    hidden_size=par.rnn_hidden_size, 
                     num_layers=2,
                     dropout=par.rnn_dropout_between, 
                     batch_first=True)
@@ -35,7 +35,41 @@ class DeepVO(nn.Module):
         # Comput the shape based on diff image size
 
 
+    def freeze_cnn(self):
+        print("Freezing CNN")
+        for par in self.conv1.parameters():
+            par.requires_grad = False
+        for par in self.conv2.parameters():
+            par.requires_grad = False
+        for par in self.conv3.parameters():
+            par.requires_grad = False
+        for par in self.conv3_1.parameters():
+            par.requires_grad = False
+        for par in self.conv4.parameters():
+            par.requires_grad = False
+        for par in self.conv4_1.parameters():
+            par.requires_grad = False
+        for par in self.conv5.parameters():
+            par.requires_grad = False
+        for par in self.conv5_1.parameters():
+            par.requires_grad = False
+        for par in self.conv6.parameters():
+            par.requires_grad = False
+
+
         
 if __name__ == "__main__":
     M_deepvo = DeepVO(1, 2)
     print(f"Num Parameters: {sum( p.numel() for p in M_deepvo.parameters() if (p.requires_grad))}")
+    M_deepvo.rnn = nn.LSTM(
+        input_size=int(30720), 
+        hidden_size=500, 
+        num_layers=2,
+        dropout=par.rnn_dropout_between, 
+        batch_first=True
+    )
+    print(f"Num Parameters: {sum( p.numel() for p in M_deepvo.parameters() if (p.requires_grad))}")
+    # M_deepvo.freeze_cnn()
+    # print(f"Num Parameters: {sum( p.numel() for p in M_deepvo.parameters() if (p.requires_grad))}")
+
+
